@@ -6,10 +6,12 @@ import NumResults     from './NumResults.jsx';
 import MoviesList     from './MoviesList.jsx';
 import Box            from './Box.jsx';
 import WatchedSummary from './WatchedSummary.jsx';
-import WatchedList    from './WatchedList.jsx';
-import { useState }   from 'react';
+import WatchedList             from './WatchedList.jsx';
+import { useEffect, useState } from 'react';
+import Loader from './Loader.jsx';
 
 
+const KEY = '539af4a'
 const tempMovieData = [
 	{
 		imdbID: 'tt1375666',
@@ -59,6 +61,17 @@ const tempWatchedData = [
 export default function App() {
 	const [movies, setMovies] = useState(tempMovieData);
 	const [watched, setWatched] = useState(tempWatchedData);
+	const [isLoading, setIsLoading] = useState(false)
+	
+	useEffect(() => {
+		(async function() {
+			setIsLoading(true)
+			const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=mai`)
+			const data = await res.json()
+			setMovies(data.Search)
+			setIsLoading(false)
+		})()
+	}, []);
 	
 	return (
 			<>
@@ -70,7 +83,7 @@ export default function App() {
 				
 				<Main>
 					<Box>
-						<MoviesList movies={movies} />
+						{isLoading ? <Loader/> : <MoviesList movies={movies} />}
 					</Box>
 					<Box>
 						<WatchedSummary watched={watched} />
