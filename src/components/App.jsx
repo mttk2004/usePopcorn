@@ -66,7 +66,7 @@ export default function App() {
 	useEffect(() => {
 		(async function() {
 			setIsLoading(true)
-			const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=mai`)
+			const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=mai`)
 			const data = await res.json()
 			setMovies(data.Search)
 			setIsLoading(false)
