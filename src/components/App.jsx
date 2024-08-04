@@ -1,17 +1,19 @@
-import Main           from './Main.jsx';
-import NavBar         from './NavBar.jsx';
-import Logo           from './Logo.jsx';
-import SearchInput    from './SearchInput.jsx';
-import NumResults     from './NumResults.jsx';
-import MoviesList     from './MoviesList.jsx';
-import Box            from './Box.jsx';
-import WatchedSummary from './WatchedSummary.jsx';
+import Main                    from './Main.jsx';
+import NavBar                  from './NavBar.jsx';
+import Logo                    from './Logo.jsx';
+import SearchInput             from './SearchInput.jsx';
+import NumResults              from './NumResults.jsx';
+import MoviesList              from './MoviesList.jsx';
+import Box                     from './Box.jsx';
+import WatchedSummary          from './WatchedSummary.jsx';
 import WatchedList             from './WatchedList.jsx';
 import { useEffect, useState } from 'react';
-import Loader from './Loader.jsx';
+import Loader                  from './Loader.jsx';
+import ErrorMessage            from './ErrorMessage.jsx';
+import MovieDetails            from './MovieDetails.jsx';
+import { KEY }                 from '../config.js';
 
 
-const KEY = '539af4a'
 const tempMovieData = [
 	{
 		imdbID: 'tt1375666',
@@ -61,33 +63,72 @@ const tempWatchedData = [
 export default function App() {
 	const [movies, setMovies] = useState(tempMovieData);
 	const [watched, setWatched] = useState(tempWatchedData);
-	const [isLoading, setIsLoading] = useState(false)
+	const [query, setQuery] = useState('');
+	const [selectedId, setSelectedId] = useState("tt31174028");
+	const [isLoading, setIsLoading] = useState(false);
+	const [errMes, setErrMes] = useState('');
 	
 	useEffect(() => {
-		(async function() {
-			setIsLoading(true)
-			const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=mai`)
-			const data = await res.json()
-			setMovies(data.Search)
-			setIsLoading(false)
-		})()
-	}, []);
+		const fetchMovies = async function () {
+			try {
+				setIsLoading(true);
+				setErrMes('');
+				
+				const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`);
+				
+				if (!res.ok) throw new Error('Something went wrong');
+				
+				const data = await res.json();
+				if (data.Response === 'False') throw new Error(data.Error);
+				
+				setMovies(data.Search);
+			}
+			catch (err) {
+				console.error(err.message);
+				setErrMes(err.message);
+			}
+			finally {
+				setIsLoading(false);
+			}
+		};
+		
+		if (query.length < 3) {
+			setMovies([]);
+			setErrMes('');
+			return;
+		}
+		
+		fetchMovies();
+	}, [query]);
+	
+	const handleSelectMovie = function(id) {
+		setSelectedId(id === selectedId ? null : id)
+	}
+	
+	const handleCloseMovie = function() {
+		setSelectedId(null)
+	}
 	
 	return (
 			<>
 				<NavBar>
 					<Logo />
-					<SearchInput />
+					<SearchInput query={query} setQuery={setQuery} />
 					<NumResults movies={movies} />
 				</NavBar>
 				
 				<Main>
 					<Box>
-						{isLoading ? <Loader/> : <MoviesList movies={movies} />}
+						{/*{isLoading ? <Loader /> : <MoviesList movies={movies} />}*/}
+						{isLoading && <Loader />}
+						{!isLoading && !errMes && <MoviesList movies={movies} onSelectMovie={handleSelectMovie} />}
+						{errMes && <ErrorMessage message={errMes} />}
 					</Box>
 					<Box>
-						<WatchedSummary watched={watched} />
-						<WatchedList watched={watched} />
+						{selectedId ? <MovieDetails id={selectedId} onCloseMovie={handleCloseMovie} /> : <>
+							<WatchedSummary watched={watched} />
+							<WatchedList watched={watched} />
+						</>}
 					</Box>
 				</Main>
 			</>

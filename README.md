@@ -55,3 +55,77 @@ export default ExampleComponent;
 - **Cleanup**: The cleanup function runs before the component unmounts or before the effect re-runs.
 
 This is a basic overview of how `useEffect` works in React.
+
+--------------------------------------
+
+### Explanation of `React.memo`
+
+`React.memo` is a higher-order component that optimizes functional components by memoizing their output. This means that React will skip rendering the component if its props have not changed, thus improving performance by avoiding unnecessary re-renders.
+
+### How `React.memo` Works
+
+1. **Memoization**: `React.memo` stores the result of the last render and compares the new props with the previous ones.
+2. **Shallow Comparison**: By default, `React.memo` performs a shallow comparison of the props. If the props are the same, the component is not re-rendered.
+3. **Custom Comparison Function**: You can provide a custom comparison function to control when the component should re-render.
+
+### Using `React.memo` Effectively
+
+1. **Wrap the Component**: Use `React.memo` to wrap the component you want to optimize.
+2. **Stable Props**: Ensure that the props passed to the component are stable and do not change unnecessarily.
+3. **Memoize Callbacks**: Use `useCallback` to memoize functions passed as props to prevent them from being recreated on every render.
+
+### Example
+
+#### Pseudocode
+
+1. Import `memo` from React.
+2. Wrap the `MovieDetails` component with `memo`.
+3. Optionally, provide a custom comparison function to control re-renders.
+
+#### Code
+
+```javascript
+import React, { useEffect, memo } from 'react';
+import { KEY } from '../config.js';
+
+function MovieDetails({ id, onCloseMovie }) {
+  useEffect(() => {
+    console.log('useEffect triggered for id:', id);
+    const getMovieDetails = async function() {
+      const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&i=${id}`);
+      const data = await res.json();
+      console.log(data);
+    };
+
+    getMovieDetails();
+  }, [id]);
+
+  console.log('MovieDetails component rendered with id:', id);
+
+  return (
+    <div className="details">
+      <button className="btn-back" onClick={onCloseMovie}>&larr;</button>
+      {id}
+    </div>
+  );
+}
+
+export default memo(MovieDetails);
+```
+
+#### Custom Comparison Function
+
+```javascript
+function areEqual(prevProps, nextProps) {
+  return prevProps.id === nextProps.id && prevProps.onCloseMovie === nextProps.onCloseMovie;
+}
+
+export default memo(MovieDetails, areEqual);
+```
+
+### Summary
+
+- **Import `memo`**: Import `memo` from React.
+- **Wrap Component**: Wrap the component with `memo`.
+- **Stable Props**: Ensure props are stable.
+- **Custom Comparison**: Optionally, use a custom comparison function for more control.

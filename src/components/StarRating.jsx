@@ -52,7 +52,7 @@ export default function StarRating({
 		lineHeight: '1',
 		color,
 		fontSize  : size * .8,
-		fontWeight: 700
+		fontWeight: 500
 	};
 	
 	return <div style={containerStyle} {...(className && { className: className })} >

@@ -6,12 +6,8 @@
  *  "Family is where life begins and love never ends."
  */
 
-import { useState } from 'react';
 
-
-export default function SearchInput() {
-	const [query, setQuery] = useState('');
-	
+export default function SearchInput({ query, setQuery }) {
 	return <input
 			className="search"
 			type="text"
