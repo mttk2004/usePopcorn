@@ -1,6 +1,6 @@
 :root {
-  --color-primary: #3e4259;
-  --color-primary-light: #4a4e69;
+  --color-primary: #004669;
+  --color-primary-light: #0a6996;
   --color-text: #dee2e6;
   --color-text-dark: #adb5bd;
   --color-background-100: #343a40;
@@ -50,8 +50,8 @@ body {
 }
 
 .box {
-  width: 42rem;
-  max-width: 42rem;
+  width: 45rem;
+  max-width: 45rem;
   background-color: var(--color-background-500);
   border-radius: 0.9rem;
   overflow: auto;
@@ -287,11 +287,14 @@ body {
   margin-bottom: 0.8rem;
   font-weight: 600;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   gap: 2.4rem;
 }
 
 .btn-add {
+  align-self: stretch;
   background-color: var(--color-primary);
   color: var(--color-text);
   border: none;

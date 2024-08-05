@@ -9,9 +9,9 @@
 import WatchedMovie from './WatchedMovie.jsx';
 
 
-export default function WatchedList({ watched }) {
+export default function WatchedList({ watched, onDeleteWatched }) {
 	return <ul className="list">
-		{watched.map((movie) => <WatchedMovie movie={movie} key={movie.imdbID} />)}
+		{watched.map((movie) => <WatchedMovie movie={movie} key={movie.imdbID} onDeleteWatched={onDeleteWatched} />)}
 	</ul>;
 }
 

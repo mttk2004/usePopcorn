@@ -13,21 +13,45 @@ import StarRating              from './StarRating.jsx';
 import Loader                  from './Loader.jsx';
 
 
-export default function MovieDetails({ id, onCloseMovie }) {
+export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }) {
 	const [movie, setMovie] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [userRating, setUserRating] = useState(0);
 	
 	const {
 					Title   : title,
 					Poster  : poster,
 					Plot    : plot,
 					Runtime : runtime,
+					Year    : year,
 					Genre   : genre,
 					Director: director,
 					Actors  : actors,
 					Released: released,
 					imdbRating
 				} = movie || {};
+	
+	const watchedIndex = watched.findIndex(movie => movie.imdbID === id);
+	const isWatched = watchedIndex !== -1;
+	
+	const handleRating = function (rating) {
+		setUserRating(rating);
+	};
+	
+	const addWatchedMovie = function () {
+		const newWatchedMovie = {
+			runtime   : runtime ? +runtime.split(' ').at(0) : 'N/A',
+			imdbRating: +imdbRating,
+			poster,
+			title,
+			imdbID    : id,
+			year,
+			userRating
+		};
+		
+		onAddWatched(newWatchedMovie);
+		onCloseMovie();
+	};
 	
 	useEffect(() => {
 		const getMovieDetails = async function () {
@@ -40,6 +64,13 @@ export default function MovieDetails({ id, onCloseMovie }) {
 		
 		getMovieDetails();
 	}, [id]);
+	
+	useEffect(() => {
+		if (!title) return;
+		document.title = `Movie | ${title}`;
+		
+		return () => document.title = 'usePopcorn';
+	}, [title]);
 	
 	return <div className="details">
 		{isLoading ? <Loader /> : <>
@@ -56,7 +87,14 @@ export default function MovieDetails({ id, onCloseMovie }) {
 			
 			<section>
 				<div className="rating">
-					<StarRating maxRating={10} />
+					{isWatched ? <p>You rated this movie {watched[watchedIndex].userRating}<span>⭐</span></p>
+										 :
+					 <>
+						 <StarRating maxRating={10} onSetRating={handleRating} />
+						 {userRating > 0 && <button className="btn-add" onClick={addWatchedMovie}>+ Add to
+																																											list</button>}
+					 </>
+					}
 				</div>
 				<p>
 					<em>{plot}</em>
