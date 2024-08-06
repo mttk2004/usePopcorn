@@ -47,7 +47,6 @@ export default function App() {
 				
 				<Main>
 					<Box>
-						{/*{isLoading ? <Loader /> : <MoviesList movies={movies} />}*/}
 						{isLoading && <Loader />}
 						{!isLoading && !errMes && <MoviesList
 								movies={movies} onSelectMovie={handleSelectMovie} />}

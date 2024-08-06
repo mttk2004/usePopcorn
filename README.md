@@ -1,4 +1,4 @@
-### `useEffect` Hook in React
+## `useEffect` Hook in React
 
 The `useEffect` hook is a fundamental part of React's functional components, allowing you to perform side effects in your components. Side effects can include data fetching, subscriptions, or manually changing the DOM.
 
@@ -58,7 +58,7 @@ This is a basic overview of how `useEffect` works in React.
 
 --------------------------------------
 
-### Explanation of `React.memo`
+## Explanation of `React.memo`
 
 `React.memo` is a higher-order component that optimizes functional components by memoizing their output. This means that React will skip rendering the component if its props have not changed, thus improving performance by avoiding unnecessary re-renders.
 
@@ -92,7 +92,7 @@ function MovieDetails({ id, onCloseMovie }) {
   useEffect(() => {
     console.log('useEffect triggered for id:', id);
     const getMovieDetails = async function() {
-      const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&i=${id}`);
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&i=${id}`);
       const data = await res.json();
       console.log(data);
     };

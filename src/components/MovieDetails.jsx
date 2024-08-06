@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { KEY }                 from '../config.js';
 import StarRating              from './StarRating.jsx';
 import Loader                  from './Loader.jsx';
+import { useKey }              from '../useKey.js';
 
 
 export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }) {
@@ -70,15 +71,11 @@ export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }
 		return () => document.title = 'usePopcorn';
 	}, [title]);
 	
-	useEffect(() => {
-		const callback = (e) => {
-			if (e.code === 'Escape') onCloseMovie()
-		}
-		
-		document.addEventListener('keydown', callback)
-		
-		return () => document.removeEventListener('keydown', callback)
-	}, [onCloseMovie]);
+	const callback = (e) => {
+		if (e.code === 'Escape') onCloseMovie();
+	};
+	
+	useKey(callback);
 	
 	return <div className="details">
 		{isLoading ? <Loader /> : <>
