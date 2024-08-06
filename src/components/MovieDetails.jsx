@@ -23,7 +23,6 @@ export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }
 					Poster  : poster,
 					Plot    : plot,
 					Runtime : runtime,
-					Year    : year,
 					Genre   : genre,
 					Director: director,
 					Actors  : actors,
@@ -45,7 +44,6 @@ export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }
 			poster,
 			title,
 			imdbID    : id,
-			year,
 			userRating
 		};
 		
@@ -72,6 +70,16 @@ export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }
 		return () => document.title = 'usePopcorn';
 	}, [title]);
 	
+	useEffect(() => {
+		const callback = (e) => {
+			if (e.code === 'Escape') onCloseMovie()
+		}
+		
+		document.addEventListener('keydown', callback)
+		
+		return () => document.removeEventListener('keydown', callback)
+	}, [onCloseMovie]);
+	
 	return <div className="details">
 		{isLoading ? <Loader /> : <>
 			<header>
@@ -91,7 +99,7 @@ export default function MovieDetails({ id, onCloseMovie, onAddWatched, watched }
 										 :
 					 <>
 						 <StarRating maxRating={10} onSetRating={handleRating} />
-						 {userRating > 0 && <button className="btn-add" onClick={addWatchedMovie}>+ Add to
+						 {userRating > 0 && <button className="btn-add" onClick={addWatchedMovie}>Add to
 																																											list</button>}
 					 </>
 					}

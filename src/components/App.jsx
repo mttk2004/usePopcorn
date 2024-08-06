@@ -1,64 +1,25 @@
-import Main                    from './Main.jsx';
-import NavBar                  from './NavBar.jsx';
-import Logo                    from './Logo.jsx';
-import SearchInput             from './SearchInput.jsx';
-import NumResults              from './NumResults.jsx';
-import MoviesList              from './MoviesList.jsx';
-import Box                     from './Box.jsx';
-import WatchedSummary          from './WatchedSummary.jsx';
-import WatchedList             from './WatchedList.jsx';
-import { useEffect, useState } from 'react';
-import Loader                  from './Loader.jsx';
-import ErrorMessage            from './ErrorMessage.jsx';
-import MovieDetails            from './MovieDetails.jsx';
-import { KEY }                 from '../config.js';
+import Main                from './Main.jsx';
+import NavBar              from './NavBar.jsx';
+import Logo                from './Logo.jsx';
+import SearchInput         from './SearchInput.jsx';
+import NumResults          from './NumResults.jsx';
+import MoviesList          from './MoviesList.jsx';
+import Box                 from './Box.jsx';
+import WatchedSummary      from './WatchedSummary.jsx';
+import WatchedList         from './WatchedList.jsx';
+import { useState }        from 'react';
+import Loader              from './Loader.jsx';
+import ErrorMessage        from './ErrorMessage.jsx';
+import MovieDetails        from './MovieDetails.jsx';
+import { useMovies }       from '../useMovies.js';
+import { useLocalStorage } from '../useLocalStorage.js';
 
 
 export default function App() {
-	const [movies, setMovies] = useState([]);
-	const [watched, setWatched] = useState([]);
 	const [query, setQuery] = useState('');
-	const [selectedId, setSelectedId] = useState('tt31174028');
-	const [isLoading, setIsLoading] = useState(false);
-	const [errMes, setErrMes] = useState('');
-	
-	useEffect(() => {
-		const controller = new AbortController();
-		
-		const fetchMovies = async function () {
-			try {
-				setIsLoading(true);
-				setErrMes('');
-				
-				const res = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-																{ signal: controller.signal });
-				
-				if (!res.ok) throw new Error('Something went wrong');
-				
-				const data = await res.json();
-				if (data.Response === 'False') throw new Error(data.Error);
-				
-				setMovies(data.Search);
-			}
-			catch (err) {
-				console.error(err.message);
-				setErrMes(err.message);
-			}
-			finally {
-				setIsLoading(false);
-			}
-		};
-		
-		if (query.length < 3) {
-			setMovies([]);
-			setErrMes('');
-			return;
-		}
-		
-		fetchMovies();
-		
-		return () => controller.abort('no necessary');
-	}, [query]);
+	const [selectedId, setSelectedId] = useState('');
+	const [watched, setWatched] = useLocalStorage([], 'watched');
+	const { movies, isLoading, errMes } = useMovies(query);
 	
 	const handleSelectMovie = function (id) {
 		setSelectedId(id === selectedId ? null : id);
